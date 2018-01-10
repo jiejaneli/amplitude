@@ -1,0 +1,203 @@
+1. clone amplitude from Githup donwto local system:
+==================================================
+
+cd /Users/jean/Documets/workspace
+git clone https://github.com/treasure-data/embulk-output-amplitude
+
+2. to compile the files:
+=======================
+cd /Users/jean/Documents/workspace/embulk-output-amplitude
+
+TD-0026:embulk-output-amplitude jean$ gradle package
+                                      ==============
+
+Starting a Gradle Daemon (subsequent builds will be faster)
+
+> Configure project :
+The Task.leftShift(Closure) method has been deprecated and is scheduled to be removed in Gradle 5.0. Please use Task.doLast(Action) instead.
+        at build_854xg8ot5wb4mo1lou6qxnyan.run(/Users/jean/Documents/workspace/embulk-output-amplitude/build.gradle:83)
+        (Run with --stacktrace to get the full stack trace of this deprecation warning.)
+The ConfigurableReport.setDestination(Object) method has been deprecated and is scheduled to be removed in Gradle 5.0. Please use the method ConfigurableReport.setDestination(File) instead.
+        at build_854xg8ot5wb4mo1lou6qxnyan$_run_closure14$_closure21.doCall(/Users/jean/Documents/workspace/embulk-output-amplitude/build.gradle:93)
+        (Run with --stacktrace to get the full stack trace of this deprecation warning.)
+
+> Task :package
+> Build succeeded.
+> You can run embulk with '-L /Users/jean/Documents/workspace/embulk-output-amplitude' argument.
+
+
+BUILD SUCCESSFUL in 9s
+5 actionable tasks: 1 executed, 4 up-to-date
+
+BUILD SUCCESSFUL in 17s
+5 actionable tasks: 5 executed
+
+3. create a config.yml for amplitude output
+===========================================
+
+vi config.yml:
+
+in:
+  type: file
+  path_prefix: /Users/jean/Documents/workspace/embulk-output-amplitude/csv/empty_device_id/sample_
+  parser:
+    charset: UTF-8
+    newline: LF
+    type: csv
+    delimiter: ','
+    quote: '"'
+    escape: '"'
+    trim_if_not_quoted: false
+    skip_header_lines: 1
+    allow_extra_columns: false
+    allow_optional_columns: false
+    columns:
+    - {name: app, type: long}
+    - {name: amplitude_id, type: long}
+    - {name: user_id, type: string}
+    - {name: device_id, type: string}
+    - {name: event_time, type: timestamp, format: '%Y-%m-%d %H:%M:%S.%L'}
+    - {name: server_upload_time, type: timestamp, format: '%Y-%m-%d %H:%M:%S.%L'}
+    - {name: client_event_time, type: timestamp, format: '%Y-%m-%d %H:%M:%S.%L'}
+    - {name: client_upload_time, type: timestamp, format: '%Y-%m-%d %H:%M:%S.%L'}
+    - {name: event_id, type: long}
+    - {name: session_id, type: long}
+    - {name: event_type, type: string}
+    - {name: amplitude_event_type, type: string}
+    - {name: version_name, type: string}
+    - {name: _schema, type: long}
+    - {name: adid, type: string}
+    - {name: groups, type: json}
+    - {name: idfa, type: string}
+    - {name: library, type: string}
+    - {name: processed_time, type: timestamp, format: '%Y-%m-%d %H:%M:%S.%L'}
+    - {name: user_creation_time, type: timestamp, format: '%Y-%m-%d %H:%M:%S.%L'}
+    - {name: platform, type: string}
+    - {name: os_name, type: string}
+    - {name: os_version, type: string}
+    - {name: device_brand, type: string}
+    - {name: device_manufacturer, type: string}
+    - {name: device_model, type: string}
+    - {name: device_carrier, type: string}
+    - {name: device_type, type: string}
+    - {name: device_family, type: string}
+    - {name: location_lat, type: string}
+    - {name: location_lng, type: string}
+    - {name: country, type: string}
+    - {name: language, type: string}
+    - {name: city, type: string}
+    - {name: region, type: string}
+    - {name: dma, type: string}
+    - {name: revenue, type: string}
+    - {name: ip_address, type: string}
+    - {name: paying, type: string}
+    - {name: start_version, type: string}
+    - {name: event_properties, type: json}
+    - {name: user_properties, type: json}
+    - {name: data, type: string}
+    - {name: uuid, type: string}
+    - {name: _insert_id, type: string}
+    - {name: time, type: long}
+out:
+  type: amplitude
+  apikey: '4d587643fe6b98faba0022f07dc29187'
+
+#go to https://github.com/treasure-data/embulk-output-amplitude/blob/master/README.md to copy content to config.yml file
+
+3. embulk with run:
+==================
+
+TD-0026:embulk-output-amplitude jean$ embulk run -I ./lib config.yml
+2018-01-02 18:52:30.451 -0800: Embulk v0.8.39
+
+********************************** INFORMATION **********************************
+  Join us! Embulk-announce mailing list is up for IMPORTANT annoucement such as
+    compatibility-breaking changes and key feature updates.
+  https://groups.google.com/forum/#!forum/embulk-announce
+*********************************************************************************
+
+4.amplitude API:
+===============
+Amplitude API Document: https://amplitude.zendesk.com/hc/en-us/articles/205406637-Export-API-Export-your-app-s-event-data
+
+
+git checkout PLT-8721-first_implementation # check out working branch instead working on master branch
+git pull  # pull changes for working branch
+change apikey to api_key in config.yml # make changes for api_key according to the changes from the code
+gradle package # re-compile 
+embulk run -I ./lib config.yml
+
+git reset --hard 14bb24163f30037442b30f452b9061509bd37fcd   # return back to 14bb24163f30037442b30f452b9061509bd37fcd stage
+./gradlew  classpath
+./gradlew package
+
+git branch
+git status
+git pull
+git log
+
+update embulk version:
+embulk selfupdate 0.8.31
+embulk selfupdate 0.8.32
+
+./gradlew clean gem classpath
+embulk run -I ./lib config.yml
+
+pd -ef
+kill -QUIT 1080
+
+===================================================
+login -pfl jean /bin/bash -c exec -la bash /bin/bash
+-bash
+/Applications/iTerm.app/Contents/MacOS/iTerm2 --server login -fp jean
+login -fp jean
+-bash
+emacs config.yml
+/Applications/iTerm.app/Contents/MacOS/iTerm2 --server login -fp jean
+=====================================================================
+
+cat lib/embulk/output/amplitude.rb
+
+
+e.g
+you are on "master" branch and you want the changes from the "project1" branch to be incorporated into "master":
+1. $git status
+   # on branch master
+   # nothing to commit (working directory clean)
+
+2. create a new branch to use as a savepoint, but don't switch to it
+   $git branch savepoint
+   $git status
+   # on branch master
+
+3. do the merge
+   $git merge project1
+   if you want to abort the merge at this point, 
+   $git reset --hard
+
+4. switch to your visualizer and predict how its view will change when you refresh it
+   1). after a merge, you should see a new commit
+   2). The new commit should have a message like "Merge branch 'proejct1' into master"
+   3). your master branch label should have moved to this new commit, while 'project1'branch label should still be in the same place
+
+5. refresh your visualizer and see whether your prediction was correct
+
+6. are you happy with the resukt?
+   if yes, delete the savepoint ==> $git branch -d savepoint
+   if no, reset your branch to the savepoint ==> $git reset --hard savepoint
+
+   If you want to clean up, you can mow delete the saveoint with $git branch -d savepoint
+
+
+cherry-pick:
+it's managed like a rebase, by this it takes an existing commint and regerenates it taking as the starting point the head of the branch your currently on
+
+1. checkout (switch to) target branch
+   $git cherry-pick <commit id>
+
+2. commit id is activity id of another brnch
+   $git cherry-pick 9772dd546a3609b06f84b680340fb84c5463264f
+
+3. push to target branch
+     
+A rebase takes a commit that has a parent X and regenerates the commit as if it actually had a parent Y, and this is precisely waht a cherry pick does
