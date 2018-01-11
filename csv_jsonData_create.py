@@ -710,6 +710,35 @@ def func_46_time(choice):
      return rannum(1111111111, 9999999999)
 
 
+# function to generate field 46 (No 46 field for event)
+# time: long
+def func_47_price(choice):
+ 
+  if choice == 1:
+     if func_true_false() == True:
+        return ranfloat(0.0, 100000.99, 2)
+     else:
+        return empty_string
+  elif choice == 2:
+     return empty_string
+  else:
+     return ranfloat(0.0, 10000.99, 2)
+
+
+# function to generate field 46 (No 46 field for event)
+# time: long
+def func_48_quantity(choice):
+ 
+  if choice == 1:
+     if func_true_false() == True:
+        return rannum(1, 99999)
+     else:
+        return empty_string
+  elif choice == 2:
+     return empty_string
+  else:
+     return rannum(1, 99999)
+
 def main():
   if len(sys.argv) < 3:
      print "Usage: ", sys.argv[0] , " output_csv_file_name  no_of_events "
@@ -771,7 +800,9 @@ def main():
     "data",
     "uuid",
     "_insert_id",
-    "time" ]
+    "time",
+    "price",
+    "quantity"]
 
   # open output file for write
   fout = open(outfname,'w')
@@ -791,7 +822,7 @@ def main():
     else:
       fout.write (('%s \n') % (header[i]))
 
-  choices = [0 if i==0 else 3 for i in range(0,47)]
+  choices = [0 if i==0 else 3 for i in range(0,len(header)+1)]
 
   # next generate ne events and write them onto output file
   for i in range(ne):
@@ -808,7 +839,6 @@ def main():
     # 3) add 'user_id'
     myUser_id = func_03_user_id()
     myEvent = myEvent + myUser_id + CSV_delimiter
-    
 
     # 4) add 'device_id'
     myDevice_id = func_04_device_id()
@@ -991,10 +1021,18 @@ def main():
     myItem = func_45_insert_id(choices[45])
     myEvent = myEvent + str(myItem) + CSV_delimiter
 
-    ## last field NO CSV_delimiter added!!!
     # 46) add 'time'
     myItem = func_46_time(choices[46])
-    myEvent = myEvent + str(myItem) 
+    myEvent = myEvent + str(myItem) + CSV_delimiter
+
+    # 47) add 'price'
+    myItem = func_47_price(choices[47])
+    myEvent = myEvent + str(myItem) + CSV_delimiter
+
+    ## last field NO CSV_delimiter added!!!
+    # 48) add 'quantity'
+    myItem = func_48_quantity(choices[48])
+    myEvent = myEvent + str(myItem)
 
     fout.write ( ( '%s\n') % (myEvent))
     #fout.write ( ( '%d\n') % (myItem))
